@@ -9,7 +9,15 @@ body{margin:0;padding:0;background:transparent}
     border:none;
     display:flex;flex-direction:column;gap:6px;
   }
-  .option{display:flex;align-items:center;font-size:14px}
+  .option{
+    display:flex;
+    align-items:center;
+    font-size:14px;
+    background:transparent;
+    border:none;
+    color:#fff;
+    cursor:pointer;
+  }
   .key{
     width:20px;height:20px;margin-right:8px;
     background:#fff;color:#333;font-weight:bold;
