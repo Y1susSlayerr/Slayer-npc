@@ -7,10 +7,8 @@ Config.minWeaponThreat = true -- require player to be aiming a weapon to open ta
 
 -- strings (ASCII only, no accents or ñ as requested)
 Config.text = {
-    targetLabel = 'Abrir menu secuestro',
     notifyStart = 'Estas controlando a un NPC',
     notifyStop = 'Has soltado al NPC',
-    noVehicle = 'No hay vehiculos cerca',
 }
 
 -- controls while carrying
