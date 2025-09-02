@@ -5,9 +5,14 @@ window.addEventListener('message', (e) => {
   const panel = document.getElementById('panel');
   if (data.action === 'open') {
     state.netId = data.netId;
+    panel.style.left = `${data.x * 100}%`;
+    panel.style.top = `${data.y * 100}%`;
     panel.classList.remove('hidden');
   } else if (data.action === 'hide') {
     panel.classList.add('hidden');
+  } else if (data.action === 'position') {
+    panel.style.left = `${data.x * 100}%`;
+    panel.style.top = `${data.y * 100}%`;
   }
 });
 

@@ -37,9 +37,15 @@ local function threatenPed(ped, playerPed)
     TaskHandsUp(ped, -1, playerPed, -1, true)
 end
 
+local function getPedScreenCoords(ped)
+    local coords = GetPedBoneCoords(ped, 31086, 0.0, 0.0, 0.0)
+    return GetScreenCoordFromWorldCoord(coords.x, coords.y, coords.z)
+end
+
 local function openNuiForPed(ped)
     local netId = NetworkGetNetworkIdFromEntity(ped)
-    SendNUIMessage({ action = 'open', netId = netId, carrying = carrying })
+    local _, x, y = getPedScreenCoords(ped)
+    SendNUIMessage({ action = 'open', netId = netId, carrying = carrying, x = x, y = y })
     SetNuiFocus(true, false)
 end
 
@@ -184,5 +190,17 @@ CreateThread(function()
                 end
             end
         end
+    end
+end)
+
+CreateThread(function()
+    while true do
+        if targetPed and not carrying then
+            local onScreen, x, y = getPedScreenCoords(targetPed)
+            if onScreen then
+                SendNUIMessage({ action = 'position', x = x, y = y })
+            end
+        end
+        Wait(0)
     end
 end)
