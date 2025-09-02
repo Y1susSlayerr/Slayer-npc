@@ -37,6 +37,11 @@ local function threatenPed(ped, playerPed)
     TaskHandsUp(ped, -1, playerPed, -1, true)
 end
 
+local function GetEntityRightVector(entity)
+    local rightX, rightY, rightZ = GetEntityMatrix(entity)
+    return vector3(rightX, rightY, rightZ)
+end
+
 local function getPedScreenCoords(ped)
     local coords = GetPedBoneCoords(ped, 31086, 0.0, 0.0, 0.0)
     -- shift from head to right shoulder and slightly down
