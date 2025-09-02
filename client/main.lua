@@ -69,6 +69,8 @@ RegisterNUICallback('close', function(_, cb)
 end)
 
 local function stopCarrying()
+    closeNui()
+    targetPed = nil
     if not carrying or not carriedPed or not DoesEntityExist(carriedPed) then
         carrying = false
         carriedPed = nil
@@ -121,6 +123,7 @@ local function startCarrying(ped)
     local player = PlayerPedId()
     carrying = true
     carriedPed = ped
+    targetPed = nil
 
     local dict = 'anim@gangops@hostage@'
     LoadAnimDict(dict)
@@ -137,6 +140,7 @@ local function startCarrying(ped)
     if Config.text.notifyStart ~= '' then
         lib.notify({title='Secuestro', description=Config.text.notifyStart, type='success'})
     end
+    openNuiForPed(ped)
 end
 
 local function takePedOutVehicle(vehicle)
@@ -174,7 +178,18 @@ end)
 RegisterNUICallback('kneel', function(data, cb)
     local netId = data.netId
     local ped = NetworkGetEntityFromNetworkId(netId)
-    if ped ~= 0 and isValidNpc(ped, PlayerPedId()) then
+    if carrying and ped == carriedPed then
+        DetachEntity(carriedPed, true, true)
+        ClearPedTasks(carriedPed)
+        ClearPedSecondaryTask(PlayerPedId())
+        carrying = false
+        LoadAnimDict('random@arrests@busted')
+        TaskPlayAnim(ped, 'random@arrests@busted', 'idle_a', 8.0, -8.0, -1, 1, 0.0, false, false, false)
+        if Config.text.notifyStop ~= '' then
+            lib.notify({title='Secuestro', description=Config.text.notifyStop, type='inform'})
+        end
+        carriedPed = nil
+    elseif ped ~= 0 and isValidNpc(ped, PlayerPedId()) then
         LoadAnimDict('random@arrests@busted')
         TaskPlayAnim(ped, 'random@arrests@busted', 'idle_a', 8.0, -8.0, -1, 1, 0.0, false, false, false)
     end
@@ -304,6 +319,11 @@ CreateThread(function()
     while true do
         if targetPed and not carrying then
             local onScreen, x, y = getPedScreenCoords(targetPed)
+            if onScreen then
+                SendNUIMessage({ action = 'position', x = x, y = y })
+            end
+        elseif carrying and carriedPed then
+            local onScreen, x, y = getPedScreenCoords(carriedPed)
             if onScreen then
                 SendNUIMessage({ action = 'position', x = x, y = y })
             end
