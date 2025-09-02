@@ -1,13 +1,13 @@
-let state = { netId: null, carrying: false };
+let state = { netId: null };
 
 window.addEventListener('message', (e) => {
   const data = e.data || {};
+  const panel = document.getElementById('panel');
   if (data.action === 'open') {
     state.netId = data.netId;
-    state.carrying = !!data.carrying;
-    document.getElementById('panel').classList.remove('hidden');
+    panel.classList.remove('hidden');
   } else if (data.action === 'hide') {
-    document.getElementById('panel').classList.add('hidden');
+    panel.classList.add('hidden');
   }
 });
 
@@ -19,19 +19,27 @@ const post = (name, body = {}) => {
   }).catch(()=>{});
 };
 
+document.getElementById('kidnapBtn').addEventListener('click', () => {
+  post('kidnap', { netId: state.netId });
+  post('close', {});
+});
+
+document.getElementById('kneelBtn').addEventListener('click', () => {
+  post('kneel', { netId: state.netId });
+  post('close', {});
+});
+
+document.getElementById('releaseBtn').addEventListener('click', () => {
+  post('release', {});
+  post('close', {});
+});
+
+document.getElementById('closeBtn').addEventListener('click', () => {
+  post('close', {});
+});
+
 document.addEventListener('keydown', (e) => {
-  const key = e.key.toLowerCase();
-  if (document.getElementById('panel').classList.contains('hidden')) return;
-  if (key === 'y') {
-    post('kidnap', { netId: state.netId });
-    post('close', {});
-  } else if (key === 'u') {
-    post('kneel', { netId: state.netId });
-    post('close', {});
-  } else if (key === 'o') {
-    post('release', {});
-    post('close', {});
-  } else if (key === 'escape') {
+  if (e.key.toLowerCase() === 'escape') {
     post('close', {});
   }
 });
