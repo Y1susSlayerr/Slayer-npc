@@ -4,7 +4,7 @@ lua54 'yes'
 
 name 'Slayer_npc_kidnap'
 author 'pablo cifuentes + chatgpt'
-description 'Kidnap NPCs by aiming a weapon, open an ox-target NUI menu to control actions.'
+description 'Kidnap NPCs by aiming a weapon and using a key-driven NUI menu.'
 version '0.1.0'
 
 shared_scripts {
@@ -31,5 +31,4 @@ files {
 dependencies {
     'qb-core',
     'ox_lib',
-    'ox_target'
 }

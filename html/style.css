@@ -9,10 +9,5 @@ body{margin:0;padding:0;background:transparent}
   border:1px solid rgba(255,255,255,0.1);
 }
 .panel h2{margin:0 0 10px 0; font-size:18px; text-align:center;}
-.btns{display:flex; gap:8px; flex-wrap:wrap; justify-content:center}
-button{
-  border:none; padding:10px 12px; border-radius:10px; cursor:pointer;
-  background:#2c2f36; color:#fff; font-weight:600;
-}
-button:hover{filter:brightness(1.1)}
+.panel p{margin:4px 0; text-align:center;}
 .hidden{display:none}
