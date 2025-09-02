@@ -31,4 +31,5 @@ files {
 dependencies {
     'qb-core',
     'ox_lib',
+    'ox_target',
 }
