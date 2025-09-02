@@ -86,6 +86,36 @@ local function stopCarrying()
     carriedPed = nil
 end
 
+local function putCarriedPedInVehicle(vehicle)
+    if not carrying or not carriedPed or not DoesEntityExist(carriedPed) then return end
+    if not DoesEntityExist(vehicle) then return end
+
+    DetachEntity(carriedPed, true, true)
+    ClearPedTasks(carriedPed)
+    ClearPedSecondaryTask(PlayerPedId())
+    carrying = false
+
+    local maxSeats = GetVehicleMaxNumberOfPassengers(vehicle)
+    local seat = nil
+    for i = 0, maxSeats do
+        if IsVehicleSeatFree(vehicle, i) then
+            seat = i
+            break
+        end
+    end
+
+    if seat then
+        TaskEnterVehicle(carriedPed, vehicle, -1, seat, 2.0, 1, 0)
+    else
+        TaskSmartFleePed(carriedPed, PlayerPedId(), 50.0, -1, true, true)
+    end
+
+    if Config.text.notifyStop ~= '' then
+        lib.notify({title='Secuestro', description=Config.text.notifyStop, type='inform'})
+    end
+    carriedPed = nil
+end
+
 local function startCarrying(ped)
     if carrying then return end
     local player = PlayerPedId()
@@ -137,6 +167,28 @@ RegisterNUICallback('release', function(_, cb)
     end
     cb('ok')
 end)
+
+exports.ox_target:addGlobalVehicle({
+    {
+        name = 'slayer_npc_put_veh',
+        icon = 'fa-solid fa-user-injured',
+        label = 'Meter al vehiculo',
+        distance = 2.5,
+        onSelect = function(data)
+            putCarriedPedInVehicle(data.entity)
+        end,
+        canInteract = function(entity, distance, coords, name, bone)
+            if not carrying or not carriedPed then return false end
+            local maxSeats = GetVehicleMaxNumberOfPassengers(entity)
+            for i = 0, maxSeats do
+                if IsVehicleSeatFree(entity, i) then
+                    return true
+                end
+            end
+            return false
+        end
+    }
+})
 
 CreateThread(function()
     while true do
