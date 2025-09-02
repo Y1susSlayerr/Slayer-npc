@@ -80,6 +80,8 @@ local function stopCarrying()
     DetachEntity(carriedPed, true, true)
     ClearPedTasks(carriedPed)
     ClearPedSecondaryTask(PlayerPedId())
+    SetBlockingOfNonTemporaryEvents(carriedPed, false)
+    FreezeEntityPosition(carriedPed, false)
     carrying = false
     local player = PlayerPedId()
     TaskSmartFleePed(carriedPed, player, 50.0, -1, true, true)
@@ -99,6 +101,8 @@ local function kneelCarriedPed()
     SendNUIMessage({ action = 'carrying', show = false })
     LoadAnimDict('random@arrests@busted')
     TaskPlayAnim(carriedPed, 'random@arrests@busted', 'idle_a', 8.0, -8.0, -1, 1, 0.0, false, false, false)
+    SetBlockingOfNonTemporaryEvents(carriedPed, true)
+    FreezeEntityPosition(carriedPed, true)
     if Config.text.notifyStop ~= '' then
         lib.notify({title='Secuestro', description=Config.text.notifyStop, type='inform'})
     end
@@ -112,6 +116,8 @@ local function putCarriedPedInVehicle(vehicle)
     DetachEntity(carriedPed, true, true)
     ClearPedTasks(carriedPed)
     ClearPedSecondaryTask(PlayerPedId())
+    SetBlockingOfNonTemporaryEvents(carriedPed, false)
+    FreezeEntityPosition(carriedPed, false)
     carrying = false
     SendNUIMessage({ action = 'carrying', show = false })
 
@@ -138,6 +144,9 @@ end
 
 local function startCarrying(ped)
     if carrying then return end
+    FreezeEntityPosition(ped, false)
+    SetBlockingOfNonTemporaryEvents(ped, true)
+
     local player = PlayerPedId()
     carrying = true
     carriedPed = ped
@@ -201,6 +210,8 @@ RegisterNUICallback('kneel', function(data, cb)
     elseif ped ~= 0 and isValidNpc(ped, PlayerPedId()) then
         LoadAnimDict('random@arrests@busted')
         TaskPlayAnim(ped, 'random@arrests@busted', 'idle_a', 8.0, -8.0, -1, 1, 0.0, false, false, false)
+        SetBlockingOfNonTemporaryEvents(ped, true)
+        FreezeEntityPosition(ped, true)
     end
     cb('ok')
 end)
@@ -209,6 +220,8 @@ RegisterNUICallback('release', function(_, cb)
     if carrying then
         stopCarrying()
     elseif targetPed and DoesEntityExist(targetPed) then
+        FreezeEntityPosition(targetPed, false)
+        SetBlockingOfNonTemporaryEvents(targetPed, false)
         ClearPedTasks(targetPed)
         TaskSmartFleePed(targetPed, PlayerPedId(), 50.0, -1, true, true)
     end
