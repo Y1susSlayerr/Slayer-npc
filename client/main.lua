@@ -139,6 +139,29 @@ local function startCarrying(ped)
     end
 end
 
+local function takePedOutVehicle(vehicle)
+    if carrying then return end
+    if not DoesEntityExist(vehicle) then return end
+
+    local maxSeats = GetVehicleMaxNumberOfPassengers(vehicle)
+    local ped = nil
+    for i = -1, maxSeats do
+        local seatPed = GetPedInVehicleSeat(vehicle, i)
+        if seatPed ~= 0 and not IsPedAPlayer(seatPed) then
+            ped = seatPed
+            break
+        end
+    end
+
+    if not ped then return end
+
+    TaskLeaveVehicle(ped, vehicle, 0)
+    while IsPedInAnyVehicle(ped, false) do
+        Wait(0)
+    end
+    startCarrying(ped)
+end
+
 RegisterNUICallback('kidnap', function(data, cb)
     local netId = data.netId
     local ped = NetworkGetEntityFromNetworkId(netId)
@@ -187,6 +210,29 @@ exports.ox_target:addGlobalVehicle({
             end
             return false
         end
+    }
+})
+
+exports.ox_target:addGlobalVehicle({
+    {
+        name = 'slayer_npc_take_veh',
+        icon = 'fa-solid fa-user-injured',
+        label = 'Sacar del vehiculo',
+        distance = 2.5,
+        onSelect = function(data)
+            takePedOutVehicle(data.entity)
+        end,
+        canInteract = function(entity, distance, coords, name, bone)
+            if carrying then return false end
+            local maxSeats = GetVehicleMaxNumberOfPassengers(entity)
+            for i = -1, maxSeats do
+                local ped = GetPedInVehicleSeat(entity, i)
+                if ped ~= 0 and not IsPedAPlayer(ped) then
+                    return true
+                end
+            end
+            return false
+        end,
     }
 })
 
