@@ -70,6 +70,7 @@ end)
 
 local function stopCarrying()
     closeNui()
+    SendNUIMessage({ action = 'carrying', show = false })
     targetPed = nil
     if not carrying or not carriedPed or not DoesEntityExist(carriedPed) then
         carrying = false
@@ -88,6 +89,22 @@ local function stopCarrying()
     carriedPed = nil
 end
 
+local function kneelCarriedPed()
+    if not carrying or not carriedPed or not DoesEntityExist(carriedPed) then return end
+    closeNui()
+    DetachEntity(carriedPed, true, true)
+    ClearPedTasks(carriedPed)
+    ClearPedSecondaryTask(PlayerPedId())
+    carrying = false
+    SendNUIMessage({ action = 'carrying', show = false })
+    LoadAnimDict('random@arrests@busted')
+    TaskPlayAnim(carriedPed, 'random@arrests@busted', 'idle_a', 8.0, -8.0, -1, 1, 0.0, false, false, false)
+    if Config.text.notifyStop ~= '' then
+        lib.notify({title='Secuestro', description=Config.text.notifyStop, type='inform'})
+    end
+    carriedPed = nil
+end
+
 local function putCarriedPedInVehicle(vehicle)
     if not carrying or not carriedPed or not DoesEntityExist(carriedPed) then return end
     if not DoesEntityExist(vehicle) then return end
@@ -96,6 +113,7 @@ local function putCarriedPedInVehicle(vehicle)
     ClearPedTasks(carriedPed)
     ClearPedSecondaryTask(PlayerPedId())
     carrying = false
+    SendNUIMessage({ action = 'carrying', show = false })
 
     local maxSeats = GetVehicleMaxNumberOfPassengers(vehicle)
     local seat = nil
@@ -140,7 +158,7 @@ local function startCarrying(ped)
     if Config.text.notifyStart ~= '' then
         lib.notify({title='Secuestro', description=Config.text.notifyStart, type='success'})
     end
-    openNuiForPed(ped)
+    SendNUIMessage({ action = 'carrying', show = true })
 end
 
 local function takePedOutVehicle(vehicle)
@@ -179,16 +197,7 @@ RegisterNUICallback('kneel', function(data, cb)
     local netId = data.netId
     local ped = NetworkGetEntityFromNetworkId(netId)
     if carrying and ped == carriedPed then
-        DetachEntity(carriedPed, true, true)
-        ClearPedTasks(carriedPed)
-        ClearPedSecondaryTask(PlayerPedId())
-        carrying = false
-        LoadAnimDict('random@arrests@busted')
-        TaskPlayAnim(ped, 'random@arrests@busted', 'idle_a', 8.0, -8.0, -1, 1, 0.0, false, false, false)
-        if Config.text.notifyStop ~= '' then
-            lib.notify({title='Secuestro', description=Config.text.notifyStop, type='inform'})
-        end
-        carriedPed = nil
+        kneelCarriedPed()
     elseif ped ~= 0 and isValidNpc(ped, PlayerPedId()) then
         LoadAnimDict('random@arrests@busted')
         TaskPlayAnim(ped, 'random@arrests@busted', 'idle_a', 8.0, -8.0, -1, 1, 0.0, false, false, false)
@@ -267,6 +276,8 @@ CreateThread(function()
             end
             if IsControlJustPressed(0, 73) then -- X key
                 stopCarrying()
+            elseif IsControlJustPressed(0, 47) then -- G key
+                kneelCarriedPed()
             end
         end
         Wait(0)

@@ -25,3 +25,14 @@ body{margin:0;padding:0;background:transparent}
     align-items:center;justify-content:center;
   }
 .hidden{display:none}
+.carry{
+    position:absolute;
+    top:50%;
+    right:20px;
+    transform:translateY(-50%);
+    background:transparent;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
+    color:#fff;
+}

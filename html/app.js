@@ -3,6 +3,7 @@ let state = { netId: null, carrying: false };
 window.addEventListener('message', (e) => {
   const data = e.data || {};
   const panel = document.getElementById('panel');
+  const carry = document.getElementById('carry');
   if (data.action === 'open') {
     state.netId = data.netId;
     state.carrying = data.carrying;
@@ -21,6 +22,13 @@ window.addEventListener('message', (e) => {
   } else if (data.action === 'position') {
     panel.style.left = `${data.x * 100}%`;
     panel.style.top = `${data.y * 100}%`;
+  } else if (data.action === 'carrying') {
+    state.carrying = data.show;
+    if (data.show) {
+      carry.classList.remove('hidden');
+    } else {
+      carry.classList.add('hidden');
+    }
   }
 });
 
@@ -51,10 +59,10 @@ document.addEventListener('keydown', (e) => {
   } else if (key === 'e' && !state.carrying) {
     post('kidnap', { netId: state.netId });
     post('close', {});
-  } else if (key === 'x') {
+  } else if (key === 'g') {
     post('kneel', { netId: state.netId });
     post('close', {});
-  } else if (key === 'g') {
+  } else if (key === 'x') {
     post('release', {});
     post('close', {});
   }
