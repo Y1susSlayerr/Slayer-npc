@@ -37,9 +37,11 @@ local function threatenPed(ped, playerPed)
     TaskHandsUp(ped, -1, playerPed, -1, true)
 end
 
+-- Returns the right vector of an entity using its transformation matrix
 local function GetEntityRightVector(entity)
-    local rightX, rightY, rightZ = GetEntityMatrix(entity)
-    return vector3(rightX, rightY, rightZ)
+    -- GetEntityMatrix returns four vectors: forward, right, up and position
+    local _, rightVector, _, _ = GetEntityMatrix(entity)
+    return rightVector
 end
 
 local function getPedScreenCoords(ped)
