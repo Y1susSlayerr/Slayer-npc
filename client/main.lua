@@ -137,6 +137,9 @@ CreateThread(function()
                 DisableControlAction(0, 22, true)
                 DisableControlAction(0, 44, true)
             end
+            if IsControlJustPressed(0, 73) then -- X key
+                stopCarrying()
+            end
         end
         Wait(0)
     end
