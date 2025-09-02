@@ -28,12 +28,6 @@ document.addEventListener('keydown', (e) => {
   } else if (key === 'x') {
     post('kneel', { netId: state.netId });
     post('close', {});
-  } else if (key === 'y') {
-    post('melee', { netId: state.netId });
-    post('close', {});
-  } else if (key === 'k') {
-    post('threaten', { netId: state.netId });
-    post('close', {});
   } else if (key === 'g') {
     post('release', {});
     post('close', {});

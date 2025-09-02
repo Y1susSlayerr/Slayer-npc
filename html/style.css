@@ -3,10 +3,10 @@ body{margin:0;padding:0;background:transparent}
 .panel{
   position:absolute;left:50%;top:50%;
   transform:translate(-50%,-50%);
-  background:rgba(20,20,20,0.9);
+  background:transparent;
   color:#fff;padding:14px 16px;border-radius:14px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.35);
-  border:1px solid rgba(255,255,255,0.1);
+  box-shadow:none;
+  border:none;
   display:flex;flex-direction:column;gap:6px;
 }
 .option{display:flex;align-items:center;font-size:16px}

@@ -123,24 +123,6 @@ RegisterNUICallback('release', function(_, cb)
     cb('ok')
 end)
 
-RegisterNUICallback('melee', function(data, cb)
-    local netId = data.netId
-    local ped = NetworkGetEntityFromNetworkId(netId)
-    if ped ~= 0 and isValidNpc(ped, PlayerPedId()) then
-        TaskCombatPed(ped, PlayerPedId(), 0, 16)
-    end
-    cb('ok')
-end)
-
-RegisterNUICallback('threaten', function(data, cb)
-    local netId = data.netId
-    local ped = NetworkGetEntityFromNetworkId(netId)
-    if ped ~= 0 and isValidNpc(ped, PlayerPedId()) then
-        threatenPed(ped, PlayerPedId())
-    end
-    cb('ok')
-end)
-
 CreateThread(function()
     while true do
         if carrying then
