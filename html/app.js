@@ -11,10 +11,19 @@ window.addEventListener('message', (e) => {
     panel.style.top = `${data.y * 100}%`;
     panel.classList.remove('hidden');
     panel.querySelectorAll('.option').forEach((btn) => {
-      if (state.carrying && btn.dataset.action === 'kidnap') {
-        btn.classList.add('hidden');
+      const action = btn.dataset.action;
+      if (state.carrying) {
+        if (action === 'kidnap') {
+          btn.classList.add('hidden');
+        } else {
+          btn.classList.remove('hidden');
+        }
       } else {
-        btn.classList.remove('hidden');
+        if (action === 'kidnap') {
+          btn.classList.remove('hidden');
+        } else {
+          btn.classList.add('hidden');
+        }
       }
     });
   } else if (data.action === 'hide') {
@@ -59,10 +68,10 @@ document.addEventListener('keydown', (e) => {
   } else if (key === 'e' && !state.carrying) {
     post('kidnap', { netId: state.netId });
     post('close', {});
-  } else if (key === 'g') {
+  } else if (key === 'g' && state.carrying) {
     post('kneel', { netId: state.netId });
     post('close', {});
-  } else if (key === 'x') {
+  } else if (key === 'x' && state.carrying) {
     post('release', {});
     post('close', {});
   }
