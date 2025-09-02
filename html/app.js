@@ -18,28 +18,24 @@ const post = (name, body = {}) => {
     body: JSON.stringify(body)
   }).catch(()=>{});
 };
-
-document.getElementById('kidnapBtn').addEventListener('click', () => {
-  post('kidnap', { netId: state.netId });
-  post('close', {});
-});
-
-document.getElementById('kneelBtn').addEventListener('click', () => {
-  post('kneel', { netId: state.netId });
-  post('close', {});
-});
-
-document.getElementById('releaseBtn').addEventListener('click', () => {
-  post('release', {});
-  post('close', {});
-});
-
-document.getElementById('closeBtn').addEventListener('click', () => {
-  post('close', {});
-});
-
 document.addEventListener('keydown', (e) => {
-  if (e.key.toLowerCase() === 'escape') {
+  const key = e.key.toLowerCase();
+  if (key === 'escape') {
+    post('close', {});
+  } else if (key === 'e') {
+    post('kidnap', { netId: state.netId });
+    post('close', {});
+  } else if (key === 'x') {
+    post('kneel', { netId: state.netId });
+    post('close', {});
+  } else if (key === 'y') {
+    post('melee', { netId: state.netId });
+    post('close', {});
+  } else if (key === 'k') {
+    post('threaten', { netId: state.netId });
+    post('close', {});
+  } else if (key === 'g') {
+    post('release', {});
     post('close', {});
   }
 });
