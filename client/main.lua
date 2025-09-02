@@ -39,6 +39,8 @@ end
 
 local function getPedScreenCoords(ped)
     local coords = GetPedBoneCoords(ped, 31086, 0.0, 0.0, 0.0)
+    -- shift from head to right shoulder and slightly down
+    coords = coords + GetEntityRightVector(ped) * 0.2 + vector3(0.0, 0.0, -0.15)
     return GetScreenCoordFromWorldCoord(coords.x, coords.y, coords.z)
 end
 
