@@ -12,18 +12,10 @@ window.addEventListener('message', (e) => {
     panel.classList.remove('hidden');
     panel.querySelectorAll('.option').forEach((btn) => {
       const action = btn.dataset.action;
-      if (state.carrying) {
-        if (action === 'kidnap') {
-          btn.classList.add('hidden');
-        } else {
-          btn.classList.remove('hidden');
-        }
+      if (state.carrying && action === 'kidnap') {
+        btn.classList.add('hidden');
       } else {
-        if (action === 'kidnap') {
-          btn.classList.remove('hidden');
-        } else {
-          btn.classList.add('hidden');
-        }
+        btn.classList.remove('hidden');
       }
     });
   } else if (data.action === 'hide') {
@@ -68,10 +60,10 @@ document.addEventListener('keydown', (e) => {
   } else if (key === 'e' && !state.carrying) {
     post('kidnap', { netId: state.netId });
     post('close', {});
-  } else if (key === 'g' && state.carrying) {
+  } else if (key === 'g') {
     post('kneel', { netId: state.netId });
     post('close', {});
-  } else if (key === 'x' && state.carrying) {
+  } else if (key === 'x') {
     post('release', {});
     post('close', {});
   }

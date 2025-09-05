@@ -56,11 +56,13 @@ local function openNuiForPed(ped)
     local _, x, y = getPedScreenCoords(ped)
     SendNUIMessage({ action = 'open', netId = netId, carrying = carrying, x = x, y = y })
     SetNuiFocus(true, false)
+    SetNuiFocusKeepInput(true)
 end
 
 local function closeNui()
     SendNUIMessage({ action = 'hide' })
     SetNuiFocus(false, false)
+    SetNuiFocusKeepInput(false)
 end
 
 RegisterNUICallback('close', function(_, cb)
