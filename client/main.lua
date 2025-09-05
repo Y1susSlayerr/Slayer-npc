@@ -3,6 +3,7 @@ local QBCore = exports['qb-core']:GetCoreObject()
 local carrying = false
 local carriedPed = nil
 local targetPed = nil
+local PERSIST_TIME = 15 * 60 * 1000 -- 15 minutes
 
 local function debugPrint(...)
     if Config.useDebug then
@@ -49,6 +50,21 @@ local function getPedScreenCoords(ped)
     -- shift from head to right shoulder and slightly down
     coords = coords + GetEntityRightVector(ped) * 0.2 + vector3(0.0, 0.0, -0.15)
     return GetScreenCoordFromWorldCoord(coords.x, coords.y, coords.z)
+end
+
+local function keepEntity(entity, duration)
+    if not DoesEntityExist(entity) then return end
+    NetworkRegisterEntityAsNetworked(entity)
+    local netId = NetworkGetNetworkIdFromEntity(entity)
+    SetNetworkIdCanMigrate(netId, false)
+    SetEntityAsMissionEntity(entity, true, false)
+    CreateThread(function()
+        Wait(duration or PERSIST_TIME)
+        if DoesEntityExist(entity) then
+            SetNetworkIdCanMigrate(netId, true)
+            SetEntityAsNoLongerNeeded(entity)
+        end
+    end)
 end
 
 local function openNuiForPed(ped)
@@ -105,6 +121,7 @@ local function kneelCarriedPed()
     TaskPlayAnim(carriedPed, 'random@arrests@busted', 'idle_a', 8.0, -8.0, -1, 1, 0.0, false, false, false)
     SetBlockingOfNonTemporaryEvents(carriedPed, true)
     FreezeEntityPosition(carriedPed, true)
+    keepEntity(carriedPed)
     if Config.text.notifyStop ~= '' then
         lib.notify({title='Secuestro', description=Config.text.notifyStop, type='inform'})
     end
@@ -134,6 +151,8 @@ local function putCarriedPedInVehicle(vehicle)
 
     if seat then
         TaskEnterVehicle(carriedPed, vehicle, -1, seat, 2.0, 1, 0)
+        keepEntity(carriedPed)
+        keepEntity(vehicle)
     else
         TaskSmartFleePed(carriedPed, PlayerPedId(), 50.0, -1, true, true)
     end
